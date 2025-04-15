@@ -202,19 +202,21 @@ end
 
 @doc raw"""
     lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
-    num_b_attempts::Int=5, num_h_attempts::Int=10, verbose::Bool=false)
+    num_b_attempts::Int=5, num_h_attempts_per_b::Int=10, verbose::Bool=false)
 
 Computes a lower bound on the maximal positive root count of the augmented vertically parametrized 
 system given by the coefficient matrix `C`, the exponent matrix `M`, and the affine form matrix `L`.
 
-The function randomly samples `num_b_attempts` choices of the constant terms and `num_h_attempts` 
-shifts  of the tropicalized binomial variety in the space of auxillary variables in the modification.
+The function randomly samples `num_b_attempts` choices of the constant terms, and
+for each such choice `num_h_attempts_per_b` shifts of the tropicalized binomial variety 
+in the space of auxillary variables in the modification.
 
 
 """
 function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
     num_b_attempts::Int=5, 
-    num_h_attempts::Int=10, 
+    num_h_attempts_per_b::Int=10, 
+    show_progress::Bool=true,
     verbose::Bool=false
 )
     n = nrows(M) #number of variables
@@ -235,12 +237,21 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
     B, b = rational_function_field(QQ, "b"=>1:d)
     Lb = hcat(B.(L), -matrix(b))
 
+   
+    # Try different choices of b and h
+    # Keep track of the maximal positive root count found and associated b and h values
+    # Todo: Make this interruptible!
     best_count = 0
     best_b = nothing 
     best_h = nothing
-
+    progress = ProgressMeter.Progress(num_b_attempts; 
+        dt=0.4, 
+        desc="Trying parameter values...", 
+        barlen=30,
+        output = stdout,
+        enabled = show_progress
+    );
     for b_attempt=1:num_b_attempts
-        @info "Number of b attempted: $b_attempt (of $num_b_attempts)"
 
         # Pick a generic choice of b and specialize the augmentation
         is_generic = false
@@ -260,7 +271,7 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
         # Compute the stable intersection for different h values
         new_count = nothing 
         h = nothing
-        for _ = 1:num_h_attempts
+        for h_attempt = 1:num_h_attempts_per_b
             generic_perturbation = false
             while !generic_perturbation
                 try
@@ -283,9 +294,13 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
                 best_count = new_count
                 best_b = b_spec
                 best_h = h
-                @info "New best count: $best_count"
             end
         end
+
+        # Update the progres bar (todo: figure out the showvalues bug)
+        ProgressMeter.update!(progress, b_attempt; 
+            #showvalues = [("Number of b attempts", "$(b_attempt) ($(num_b_attempts))"), ("Current maximal count", best_count)]
+        )
     end
     return best_count, best_b, best_h
 end
@@ -298,8 +313,6 @@ end
 """
 lower_bound_of_maximal_positive_steady_state_count(rn::ReactionSystem; kwargs...) = 
     lower_bound_of_maximal_positive_root_count(augmented_vertical_system(rn)...; kwargs...)
-
-
 
 
 function toric_root_bound(A::ZZMatrix, L::QQMatrix;
@@ -331,6 +344,7 @@ function toric_root_bound(A::ZZMatrix, L::QQMatrix;
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
     # Check for transversality
+    # Warning: This currently gives incorrect values!
     if check_transversality
         tp = transversal_presentation(Lb_spec)
         if tp != false

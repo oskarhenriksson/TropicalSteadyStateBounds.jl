@@ -1,6 +1,7 @@
 using Oscar
 using Catalyst
 import MixedSubdivisions: mixed_volume
+import ProgressMeter
 
 include("tropical_geometry.jl")
 include("transversal_presentation.jl")

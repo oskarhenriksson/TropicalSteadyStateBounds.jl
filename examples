@@ -1,6 +1,6 @@
 using Oscar
 using Catalyst
-include("TropicalBounds.jl")
+include("src/TropicalBounds.jl")
 
 # The running example
 rn = @reaction_network begin

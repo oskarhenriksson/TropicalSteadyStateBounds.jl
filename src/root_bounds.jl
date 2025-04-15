@@ -297,9 +297,12 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
             end
         end
 
-        # Update the progres bar (todo: figure out the showvalues bug)
+        # Update the progress bar
         ProgressMeter.update!(progress, b_attempt; 
-            #showvalues = [("Number of b attempts", "$(b_attempt) ($(num_b_attempts))"), ("Current maximal count", best_count)]
+            showvalues = [
+                ("Number of b attempts", "$(b_attempt) ($(num_b_attempts))"), 
+                ("Current maximal count", best_count)
+            ]
         )
     end
     return best_count, best_b, best_h

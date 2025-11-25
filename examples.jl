@@ -1,4 +1,5 @@
-include("src/TropicalBounds.jl")
+using Catalyst
+using TropicalSteadyStateBounds
 
 # The running example
 rn = @reaction_network begin
@@ -31,7 +32,7 @@ lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
 
 
 # Cell cycle
-rn = @reaction_network begin
+rn = Catalyst.@reaction_network begin
     k1, C + Mp --> C + M
     k2, Cp + M --> C + M
     k3, M + W --> Mp + W
@@ -49,7 +50,7 @@ b =  [69, 42, 81]
 lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
 
 # HHK
-rn = @reaction_network begin
+rn = Catalyst.@reaction_network begin
     k1, HK00 --> HKp0
     k2, HKp0 -->  HK0p
     k3, HK0p --> HKpp  
@@ -68,7 +69,7 @@ lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
 
 
 # 1-site phosphorylation
-rn = @reaction_network begin
+rn = Catalyst.@reaction_network begin
   k1, S0 + E --> ES0
   k2, ES0  --> S0 + E
   k3, ES0  --> S1+E
@@ -87,7 +88,7 @@ b =     [68, 52, 99]
 lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
 
 #2-site phosphorylation
-rn = @reaction_network begin
+rn = Catalyst.@reaction_network begin
     @parameters k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 k11 k12
     @species E(t) F(t)  S0(t) S1(t) ES0(t) FS1(t) S2(t) ES1(t) FS2(t)
   k1, S0 + E --> ES0

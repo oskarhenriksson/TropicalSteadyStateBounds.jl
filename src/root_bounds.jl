@@ -1,3 +1,12 @@
+export generic_root_count,
+    steady_state_degree,
+    lower_bound_of_maximal_positive_root_count_fixed_b_h,
+    lower_bound_of_maximal_positive_root_count,
+    lower_bound_of_maximal_positive_steady_state_count,
+    toric_root_bound,
+    toric_lower_bound_of_maximal_positive_root_count_fixed_b_h,
+    toric_lower_bound_of_maximal_positive_root_count
+
 
 @doc raw"""
 generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
@@ -14,7 +23,7 @@ generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix;
  
     julia> L = matrix(QQ, [1 1]);
 
-    julia> generic_root_count(C, M, L, check_transversality=true)
+    julia> generic_root_count(C, M, L)
     3
 
     julia> generic_root_count(C, M, L, check_transversality=false)
@@ -195,7 +204,7 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
 
     # Count how many of the tropical points that are positive
     Ilin = ideal(R, C*y) + ideal(R, Lb_spec*vcat(x,z))
-    return count(is_initial_positive(Ilin, nu, p) for p in pts)
+    return count(Oscar.is_initial_positive(Ilin, nu, p) for p in pts)
 end
 
 
@@ -409,7 +418,7 @@ function toric_lower_bound_of_maximal_positive_root_count_fixed_b_h(
     # Count how many of the tropical points that are positive
     Lb_spec = hcat(L, -matrix(b_spec))
     Ilin = ideal(R, Lb_spec*vcat(x,z))
-    return count(is_initial_positive(Ilin, tropical_semiring_map(QQ), p) for p in pts)
+    return count(Oscar.is_initial_positive(Ilin, tropical_semiring_map(QQ), p) for p in pts)
 end
 
 

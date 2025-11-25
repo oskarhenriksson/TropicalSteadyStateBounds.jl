@@ -1,3 +1,5 @@
+export augmented_vertical_system
+
 """
     augmented_vertical_system(rn)
 
@@ -6,6 +8,8 @@
 
     # Example
     ```jldoctest
+    julia> using Catalyst;
+    
     julia> rn = @reaction_network begin
         k1, X1 --> X2
         k2, X2 --> X1

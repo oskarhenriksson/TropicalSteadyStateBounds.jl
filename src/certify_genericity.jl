@@ -1,4 +1,4 @@
-using Oscar
+export check_genericity_of_specialization
 
 """
     check_genericity_of_specialization(A::AbstractAlgebra.Generic.MatSpaceElem{<:RingElem}, a_spec::Vector{<:Union{Int, RingElem}})
@@ -7,6 +7,8 @@ Check if a symbolic matrix is generic at a given specialization, in the sense th
 
 # Examples
 ```jldoctest
+julia> using Oscar;
+
 julia> K, a = rational_function_field(QQ, "a"=>1:3);
 
 julia> A = matrix(K, [[a[1], a[2], a[3]],[a[1], a[1]+a[2], a[2]+a[3]]]);

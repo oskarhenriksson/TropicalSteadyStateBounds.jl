@@ -1,3 +1,5 @@
+export transversal_presentation
+
 """
     transversal_presentation(A::QQMatrix)
 

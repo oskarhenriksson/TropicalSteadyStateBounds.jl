@@ -2,7 +2,7 @@
 
 julia_version = "1.12.2"
 manifest_format = "2.0"
-project_hash = "2c33ee648fd3de6098585491c425b01321ba27b1"
+project_hash = "9513d4d221d079daf545c9a4a6eb34a355c0a8e1"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "8be2ae325471fc20b11c27bb34b518541d07dd3a"
@@ -2238,6 +2238,12 @@ version = "0.5.29"
 git-tree-sha1 = "311349fd1c93a31f783f977a71e8b062a57d4101"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.13"
+
+[[deps.TropicalSteadyStateBounds]]
+deps = ["Catalyst", "MixedSubdivisions", "Oscar", "ProgressMeter"]
+path = "."
+uuid = "711c507e-943e-4fde-96e1-c888ddd1de7d"
+version = "0.1.0"
 
 [[deps.TruncatedStacktraces]]
 deps = ["InteractiveUtils", "MacroTools", "Preferences"]

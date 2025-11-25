@@ -1,8 +1,11 @@
 using Test
 using Random, Oscar, Catalyst
+using TropicalSteadyStateBounds
 
 @testset verbose=true "Root bounds for networks" begin
 @testset "Small example" begin
+
+    Random.seed!(1234)
 
     C = matrix(QQ, [[1,-1,-1]])
     M = matrix(ZZ, [[1,0,2], [0,1,1]])
@@ -23,13 +26,14 @@ using Random, Oscar, Catalyst
     b = [71]
     @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 3
 
-    Random.seed!(1234)
     bound, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_attempts=5, num_h_attempts_per_b=3)
     @test bound == 3
     
 end
 
 @testset "Cell cycle" begin
+
+    Random.seed!(1234)
 
     rn = @reaction_network begin
         k1, C + Mp --> C + M
@@ -50,6 +54,8 @@ end
 end
 
 @testset "HHK network" begin
+
+    Random.seed!(1234)
     
     rn = @reaction_network begin
         k1, HK00 --> HKp0
@@ -70,6 +76,8 @@ end
 end
 
 @testset "1-site phosphorylation" begin
+
+    Random.seed!(1234)
 
     rn = @reaction_network begin
         k1, S0 + E --> ES0
@@ -99,6 +107,8 @@ end
 
 @testset "2-site phosphorylation" begin
 
+    Random.seed!(1234)
+
     rn = @reaction_network begin
     @parameters k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 k11 k12
     @species E(t) F(t)  S0(t) S1(t) ES0(t) FS1(t) S2(t) ES1(t) FS2(t)
@@ -123,6 +133,7 @@ end
 
 @testset "Triangle network" begin
 
+    Random.seed!(1234)
 
     rn = Catalyst.@reaction_network begin
         k1, 3*X1 + 2*X2 --> 6*X1

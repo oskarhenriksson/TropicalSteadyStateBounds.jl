@@ -1,5 +1,3 @@
-using Oscar
-using Catalyst
 include("src/TropicalBounds.jl")
 
 # The running example

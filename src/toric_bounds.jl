@@ -38,8 +38,9 @@ function toric_root_bound(A::ZZMatrix, L::QQMatrix;
         if tp != false
             verbose && @info "Transversal presentation found"
             supports = [Matrix{Int}(A_extended[:,indices]) for indices in tp]
+            supports_shifted = [S .- min.(0, vec(minimum(S, dims=2))) for S in supports];
             degA = prod(diagonal(snf(A)))
-            return mixed_volume(supports)/degA
+            return mixed_volume(supports_shifted)/degA
         end
     end
 

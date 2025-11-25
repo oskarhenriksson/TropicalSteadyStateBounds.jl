@@ -68,6 +68,26 @@ b =   [59, 34]
 lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
 
 
+# Triangle network
+rn = Catalyst.@reaction_network begin
+  k1, 3*X1 + 2*X2 --> 6*X1
+  k2, 3*X1 + 2*X2 --> 4*X2 
+  k3, 4*X2 --> 3*X1 + 2*X2 
+  k4, 6*X1 -->  4*X2
+end
+
+C, M, L = augmented_vertical_system(rn)
+C
+M
+L
+
+generic_root_count(C, M, L)
+bound, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
+A = matrix(ZZ, [[3, 2]])
+toric_root_bound(A, L)
+bound, _, _ = toric_lower_bound_of_maximal_positive_root_count(A, L)
+
+
 # 1-site phosphorylation
 rn = Catalyst.@reaction_network begin
   k1, S0 + E --> ES0

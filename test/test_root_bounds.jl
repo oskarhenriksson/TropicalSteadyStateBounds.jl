@@ -1,6 +1,7 @@
 using Test
 using Random, Oscar, Catalyst
 
+@testset verbose=true "Root bounds for networks" begin
 @testset "Small example" begin
 
     C = matrix(QQ, [[1,-1,-1]])
@@ -27,7 +28,6 @@ using Random, Oscar, Catalyst
     @test bound == 3
     
 end
-
 
 @testset "Cell cycle" begin
 
@@ -109,5 +109,30 @@ end
     end 
 
     @test steady_state_degree(rn) == 5
+
+end
+
+
+@testset "Triangle network" begin
+
+
+    rn = Catalyst.@reaction_network begin
+        k1, 3*X1 + 2*X2 --> 6*X1
+        k2, 3*X1 + 2*X2 --> 4*X2 
+        k3, 4*X2 --> 3*X1 + 2*X2 
+        k4, 6*X1 -->  4*X2
+    end;
+
+    C, M, L = augmented_vertical_system(rn)
+
+    @test generic_root_count(C, M, L) == 6
+    bound, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
+    @test bound == 1
+    A = matrix(ZZ, [[3, 2]])
+    @test toric_root_bound(A, L) == 3
+    bound, _, _ = toric_lower_bound_of_maximal_positive_root_count(A, L)
+    @test bound == 1
+
+end
 
 end

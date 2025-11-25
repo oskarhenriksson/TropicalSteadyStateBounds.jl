@@ -14,6 +14,12 @@ module TropicalSteadyStateBounds
     include("root_bounds.jl")
     include("misc.jl")
 
+    function __init__()
+        if isdefined(ProgressMeter, :ijulia_behavior)
+            ProgressMeter.ijulia_behavior(:clear)
+        end
+    end
+
 end
 
 

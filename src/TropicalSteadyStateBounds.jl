@@ -11,7 +11,9 @@ module TropicalSteadyStateBounds
     include("transversal_presentation.jl")
     include("certify_genericity.jl")
     include("reaction_networks.jl")
-    include("root_bounds.jl")
+    include("generic_root_counts.jl")
+    include("positive_bounds.jl")
+    include("toric_bounds.jl")
     include("misc.jl")
 
     function __init__()

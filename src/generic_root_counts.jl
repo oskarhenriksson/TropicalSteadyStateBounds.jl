@@ -1,0 +1,119 @@
+export steady_state_degree,
+    generic_root_count
+    
+@doc raw"""
+generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
+    b_spec = nothing, check_transversality::Bool=true, verbose::Bool=false)
+
+    Compute the generic root count of an augmented vertically parametrized system given by 
+    the coefficient matrix `C`, the exponent matrix `M`, and the affine form matrix `L`.
+
+    # Example
+    ```jldoctest
+    julia> C = matrix(QQ, [1 -1 -1]);
+
+    julia> M = matrix(ZZ, [1 0 2; 0 1 1]);
+ 
+    julia> L = matrix(QQ, [1 1]);
+
+    julia> generic_root_count(C, M, L)
+    3
+
+    julia> generic_root_count(C, M, L, check_transversality=false)
+    3
+    ```
+
+"""
+function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ, 0, nrows(M)); 
+        b_spec = nothing, 
+        check_transversality::Bool=true, 
+        verbose::Bool=false)
+
+    n = nrows(M) #number of variables
+    m = ncols(M) #number of parameters
+    s = rank(C) #rank
+    d = n-s #corank
+
+    @req nrows(L) == d "The augmentation matrix L must have the same number of rows as the corank of the coefficient matrix"
+
+    # Coefficient matrix for the augmentation of the system
+    B, b = rational_function_field(QQ, "b"=>1:d)
+    Lb = hcat(B.(L), -matrix(b))
+
+    # Pick a generic specialization of teh constant terms
+    if isnothing(b_spec)
+        is_generic = false
+        while !is_generic
+            b_spec = L*rand(1:1000, n)
+            is_generic = check_genericity_of_specialization(Lb, b_spec)
+        end
+    end
+    @req check_genericity_of_specialization(Lb, b_spec) "Choice of constant terms to be generic"
+    Lb_spec = evaluate.(Lb, Ref(b_spec))
+
+    # Compute the generic root count as a mixed volume if the linear part gives a transversal matroid
+    if check_transversality
+        tp_nonlinear = transversal_presentation(C)
+        tp_affine = transversal_presentation(Lb_spec)
+        if tp_nonlinear != false && tp_affine != false
+            verbose && @info "Transversal presentations found"
+            nonlinear_supports = [Matrix{Int}(M[:,indices]) for indices in tp_nonlinear]
+            affine_supports = [ hcat([i in 1:n ? standard_vector(i, n) : zeros(Int, n) for i in indices]...) for indices in tp_affine]
+            supports = vcat(nonlinear_supports, affine_supports)
+            return mixed_volume(supports)
+        end
+    end
+
+    # Tropicalize the linear part of the modified system
+    linear_part_matrix = block_diagonal_matrix([Lb_spec, C])
+    kernel_matrix = transpose(kernel(linear_part_matrix, side=:right))
+    TropL = tropical_linear_space(kernel_matrix)
+    verbose && @info "Tropical linear space computed"
+
+    # Tropicalize the binomial part of the modified system
+    K, t = rational_function_field(QQ,"t")
+    nu = tropical_semiring_map(K,t)
+    R, x, z, y = polynomial_ring(K, "x"=>1:n, "z"=>1:1, "y"=>1:m)
+    binomials = vcat([y[i]-prod(x.^M[:,i]) for i=1:m], [z[1]-1])
+    TropB = Oscar.tropical_variety_binomial(ideal(R, binomials), nu)
+    verbose && @info "Tropical binomial variety computed"
+ 
+    # Compute the stable intersection
+    generic_perturbation = false
+    while !generic_perturbation
+        try
+            pts, mults = tropical_stable_intersection_linear_binomial(TropL, TropB)
+            generic_perturbation = true
+            return sum(mults)
+        catch err
+            if isa(err, ErrorException) && err.msg == "random direction not generic"
+                continue
+            else
+                error(err)
+            end
+        end
+    end
+end
+
+
+
+@doc raw"""
+    steady_state_degree(rn::ReactionSystem; kwargs...)
+
+Compute the steady state degree (in the complex torus) of the steady state system of a mass action network `rn`.
+
+# Example
+```jldoctest
+julia> rn = @reaction_network begin
+    k1, X1 --> X2
+    k2, X2 --> X1
+    k3, 2*X1 + X2 --> 3*X1
+end;
+
+julia> steady_state_degree(rn)
+3
+````
+
+"""
+steady_state_degree(rn::ReactionSystem; kwargs...) = 
+    generic_root_count(augmented_vertical_system(rn)...; kwargs...)

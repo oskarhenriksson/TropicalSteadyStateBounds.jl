@@ -36,11 +36,11 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
 
     @req nrows(L) == d "The augmentation matrix L must have the same number of rows as the corank of the coefficient matrix"
 
-    # Coefficient matrix for the augmentation of the system
+    # Symbolic coefficient matrix for the augmentation of the system
     B, b = rational_function_field(QQ, "b"=>1:d)
     Lb = hcat(B.(L), -matrix(b))
 
-    # Pick a generic specialization of teh constant terms
+    # Pick a generic specialization of the constant terms
     if isnothing(b_spec)
         is_generic = false
         while !is_generic
@@ -48,7 +48,7 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
             is_generic = check_genericity_of_specialization(Lb, b_spec)
         end
     end
-    @req check_genericity_of_specialization(Lb, b_spec) "Choice of constant terms to be generic"
+    @req check_genericity_of_specialization(Lb, b_spec) "Choice of constant terms needs to be generic"
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
     # Compute the generic root count as a mixed volume if the linear part gives a transversal matroid

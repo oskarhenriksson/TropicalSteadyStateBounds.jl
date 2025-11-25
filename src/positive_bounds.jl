@@ -15,7 +15,7 @@ export lower_bound_of_maximal_positive_steady_state_count,
 )
 
 Compute a lower bound of the maximal positive root count for an augmented vertically parametrized system
-given by the matrices `C`, `M` and `L`, given a mixed choice of constant terms `b_spec` and shift `h` of
+given by the matrices `C`, `M` and `L`, given a fixed choice of constant terms `b_spec` and shift `h` of
 the tropicalized binomial variety.
 
 # Example
@@ -62,7 +62,6 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
         TropB = Oscar.tropical_variety_binomial(ideal(R, binomials), nu)
         verbose && @info "Tropical binomial variety computed"
     end
-
 
     B, b = rational_function_field(QQ, "b"=>1:d)
     Lb = hcat(B.(L), -matrix(b))

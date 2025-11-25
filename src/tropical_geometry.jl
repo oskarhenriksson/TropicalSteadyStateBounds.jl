@@ -88,18 +88,3 @@ function tropical_intersection_multiplicity(B1, B2)
     snfB12 = snf(vcat(B1, B2))
     return abs(prod([snfB12[i, i] for i in 1:ncols(snfB12)]))
 end
-
-
-@doc raw"""
-    is_initial_positive(I::MPolyIdeal, nu::TropicalSemiringMap, w::AbstractVector)
-
-Check whether a tropical point `w` is positive for the ideal `I` with respect to the tropical semiring map `nu`.
-"""
-function is_initial_positive(I::MPolyIdeal, nu::TropicalSemiringMap, w::AbstractVector)
-    inI = initial(I, nu, w)
-    G = Oscar.groebner_basis(inI; complete_reduction=true)
-    @req all(isequal(2),length.(G)) "Gröbner basis must be binomial"
-    # Check that the binomials have alternating signs
-    return all(isequal(-1),[prod([sign(c) for c in Oscar.coefficients(g)]) for g in G])
-end
-

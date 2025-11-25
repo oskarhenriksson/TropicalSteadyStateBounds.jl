@@ -77,9 +77,6 @@ rn = Catalyst.@reaction_network begin
 end
 
 C, M, L = augmented_vertical_system(rn)
-C
-M
-L
 
 generic_root_count(C, M, L)
 bound, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
@@ -103,9 +100,13 @@ end;
 
 # Verify the result for a given choice of b and h
 C, M, L = augmented_vertical_system(rn)
-h =  [79, 26, 89, 92, 34, 83]
-b =     [68, 52, 99]
+h = [79, 26, 89, 92, 34, 83]
+b = [68, 52, 99]
 lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
+
+A = kernel(matrix(ZZ, hcat([M[:, i] - M[:, ncols(M)] for i=1:ncols(M)-1]...)))
+toric_root_bound(A, L, check_transversality=true)
+toric_lower_bound_of_maximal_positive_root_count(A, L)
 
 #2-site phosphorylation
 rn = Catalyst.@reaction_network begin

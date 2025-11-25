@@ -83,9 +83,17 @@ end
     @test steady_state_degree(rn) == 3
 
     C, M, L = augmented_vertical_system(rn)
-    h =  [79, 26, 89, 92, 34, 83]
-    b =     [68, 52, 99]
+    h = [79, 26, 89, 92, 34, 83]
+    b = [68, 52, 99]
     @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 1
+
+
+    A = kernel(matrix(ZZ, hcat([M[:, i] - M[:, ncols(M)] for i=1:ncols(M)-1]...)))
+    @test toric_root_bound(A, L, check_transversality=true) == 3
+    @test toric_root_bound(A, L, check_transversality=false) == 3
+
+    h = [936, 145, 170, 323, 169, 271, 439]
+    @test toric_lower_bound_of_maximal_positive_root_count_fixed_b_h(A, L, b, h) == 1
 
 end
 

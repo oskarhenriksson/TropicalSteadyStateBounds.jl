@@ -39,8 +39,8 @@ function toric_root_bound(A::ZZMatrix, L::QQMatrix;
             verbose && @info "Transversal presentation found"
             supports = [Matrix{Int}(A_extended[:,indices]) for indices in tp]
             supports_shifted = [S .- min.(0, vec(minimum(S, dims=2))) for S in supports];
-            degA = prod(diagonal(snf(A)))
-            return mixed_volume(supports_shifted)/degA
+            degA = Int(prod(diagonal(snf(A))))
+            return Int(mixed_volume(supports_shifted)/degA)
         end
     end
 
@@ -151,8 +151,22 @@ function toric_lower_bound_of_maximal_positive_root_count(A::ZZMatrix, L::QQMatr
         new_count = nothing 
         h = nothing
         for h_attempt = 1:num_h_attempts_per_b
-            h = rand(1:1000, (n+1))
-            new_count = toric_lower_bound_of_maximal_positive_root_count_fixed_b_h(A, L, b_spec, h, Trop_toric=Trop_toric, TropL=TropL)
+            generic_perturbation = false
+            while !generic_perturbation
+                try
+                    h = rand(1:1000, (n+1))
+                    new_count = toric_lower_bound_of_maximal_positive_root_count_fixed_b_h(
+                        A, L, b_spec, h, Trop_toric=Trop_toric, TropL=TropL
+                    )
+                    generic_perturbation = true
+                catch err
+                    if isa(err, ErrorException) && err.msg == "random direction not generic"
+                        continue
+                    else
+                        error(err)
+                    end
+                end
+            end
               
             # Update the current best count
             if new_count > best_count

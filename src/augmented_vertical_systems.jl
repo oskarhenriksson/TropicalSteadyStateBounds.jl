@@ -24,9 +24,9 @@ export monomial_reembedding
     julia> C_tilde, M_tilde = monomial_reembedding(C, M);
 
     julia> C_tilde
-    [   0           κ[3]   -κ[4]           κ[5]]
-    [κ[1]   -κ[2] - κ[3]       0              0]
-    [   0              0    κ[4]   -κ[5] - κ[6]]
+    [   0           k[3]   -k[4]           k[5]]
+    [k[1]   -k[2] - k[3]       0              0]
+    [   0              0    k[4]   -k[5] - k[6]]
 
     julia> M_tilde
     [1   0   0   0]
@@ -44,12 +44,12 @@ function monomial_reembedding(C::QQMatrix, M::ZZMatrix)
     r = length(unique_columns)
 
     M_tilde = matrix(ZZ, hcat(unique_columns...))
-    K, κ = rational_function_field(QQ, "κ"=>1:ncols(M))
+    K, k = rational_function_field(QQ, "k"=>1:ncols(M))
     C_tilde = zero_matrix(K, nrows(C), r) 
     for i = 1:r
         indices = findall(c -> c == unique_columns[i], columns)
         for j in indices
-            C_tilde[:, i] += κ[j] .* C[:, j]
+            C_tilde[:, i] += k[j] .* C[:, j]
         end
     end
     return C_tilde, M_tilde

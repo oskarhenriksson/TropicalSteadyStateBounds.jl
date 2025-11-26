@@ -4,7 +4,39 @@ export lower_bound_of_maximal_positive_steady_state_count,
     lower_bound_of_maximal_positive_root_count_fixed_b_k_h
 
 
+@doc raw"""
+    lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
+    C::QQMatrix, M::ZZMatrix, L::QQMatrix,
+    b_spec::Union{Vector{Int},Vector{QQFieldElem}}, 
+    k_spec::Union{Vector{Int},Vector{QQFieldElem}},
+    h::Union{Vector{Int},Vector{QQFieldElem}}; 
+    TropB::Union{TropicalVariety,Nothing}=nothing, 
+    TropL::Union{TropicalLinearSpace,Nothing}=nothing,
+    verbose::Bool=false
+)
 
+Compute a lower bound of the maximal positive root count for an augmented vertically parametrized system given by 
+the matrices `C`, `M` and `L`, given a fixed choice of constant terms `b_spec`, parameters `k_spec` and shift `h` 
+of the tropicalized binomial variety.
+
+# Example
+```jldoctest
+julia> C = matrix(QQ, [1 -1 -1]);
+
+julia> M = matrix(ZZ, [1 0 2; 0 1 1]);
+
+julia> L = matrix(QQ, [1 1]);
+
+julia> h = [37,97,18];
+
+julia> k = [839, 562, 13];
+
+julia> b = [71];
+
+julia> lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h)
+3
+```
+"""
 function lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
     C::QQMatrix, M::ZZMatrix, L::QQMatrix,
     b_spec::Union{Vector{Int},Vector{QQFieldElem}}, 
@@ -63,23 +95,22 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
 end
 
 
-
 @doc raw"""
     lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
-    num_b_k_attempts::Int=5, num_h_attempts_per_b::Int=10, verbose::Bool=false)
+    num_b_k_attempts::Int=5, num_h_attempts_per_b_k::Int=10, verbose::Bool=false)
 
 Computes a lower bound on the maximal positive root count of the augmented vertically parametrized 
 system given by the coefficient matrix `C`, the exponent matrix `M`, and the affine form matrix `L`.
 
-The function randomly samples `num_b_k_attempts` choices of the constant terms, and
-for each such choice `num_h_attempts_per_b` shifts of the tropicalized binomial variety 
+The function randomly samples `num_b_k_attempts` choices of the b and k parameters, and
+for each such choice `num_h_attempts_per_b_k` shifts of the tropicalized binomial variety 
 in the space of auxillary variables in the modification.
 
 
 """
 function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
     num_b_k_attempts::Int=5, 
-    num_h_attempts_per_b::Int=10, 
+    num_h_attempts_per_b_k::Int=10, 
     show_progress::Bool=true,
     verbose::Bool=false
 )
@@ -130,7 +161,7 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
         # Compute the stable intersection for different h values
         new_count = nothing 
         h = nothing
-        for h_attempt = 1:num_h_attempts_per_b
+        for h_attempt = 1:num_h_attempts_per_b_k
             generic_perturbation = false
             while !generic_perturbation
                 try

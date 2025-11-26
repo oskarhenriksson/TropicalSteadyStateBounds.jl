@@ -1,4 +1,5 @@
-export augmented_vertical_system
+export augmented_vertical_system,
+    multisite_phosphorylation_matrices
 
 """
     augmented_vertical_system(rn)
@@ -27,7 +28,7 @@ export augmented_vertical_system
 
     julia> L
     [1   1]
-    ````
+    ```
 
 """
 function augmented_vertical_system(rn::ReactionSystem)
@@ -47,3 +48,63 @@ end
 
 
 
+
+
+function multisite_phosphorylation_matrices(k)
+
+    # Ordering of species: E, F, S0, ..., Sm, ES0, ..., ESm-1, FS1, ..., FSm
+
+    # Stoichiometric matrix
+    e_row = vcat([[-1, 1, 1, 0, 0, 0] for i in 1:k]...) |> transpose
+    f_row = vcat([[0, 0, 0, -1, 1, 1] for i in 1:k]...) |> transpose
+    S_rows = zeros(Int, k + 1, 6 * k)
+    for i = 1:k
+        S_rows[i:i+1, 6*(i-1)+1:6*i] = [-1 1 0 0 0 1; 0 0 1 -1 1 0]
+    end
+    ES_rows = zeros(Int, k, 6 * k)
+    for i = 1:k
+        ES_rows[i, 6*(i-1)+1:6*i] = [1, -1, -1, 0, 0, 0]
+    end
+    FS_rows = zeros(Int, k, 6 * k)
+    for i = 1:k
+        FS_rows[i, 6*(i-1)+1:6*i] = [0, 0, 0, 1, -1, -1]
+    end
+    N = matrix(QQ, vcat(e_row, f_row, S_rows, ES_rows, FS_rows))
+
+    # Kinetic matrix
+    e_rows = vcat([[1, 0, 0, 0, 0, 0] for i in 1:k]...) |> transpose
+    f_rows = vcat([[0, 0, 0, 1, 0, 0] for i in 1:k]...) |> transpose
+    S_rows = zeros(Int, k + 1, 6 * k)
+    for i = 1:k
+        S_rows[i:i+1, 6*(i-1)+1:6*i] = [1 0 0 0 0 0; 0 0 0 1 0 0]
+    end
+    ES_rows = zeros(Int, k, 6 * k)
+    for i = 1:k
+        ES_rows[i, 6*(i-1)+1:6*i] = [0, 1, 1, 0, 0, 0]
+    end
+    FS_rows = zeros(Int, k, 6 * k)
+    for i = 1:k
+        FS_rows[i, 6*(i-1)+1:6*i] = [0, 0, 0, 0, 1, 1]
+    end
+    M = matrix(ZZ, vcat(e_rows, f_rows, S_rows, ES_rows, FS_rows))
+
+    # Conservation laws
+    s_tot = [0; 0; ones(Int, 3 * k + 1)] |> transpose
+    e_tot = [1; 0; zeros(Int, k+1); ones(Int, k); zeros(Int, k)] |> transpose
+    f_tot = [0; 1; zeros(Int, k+1); zeros(Int, k); ones(Int, k)] |> transpose
+    L = matrix(QQ, vcat(s_tot, e_tot, f_tot))
+
+    @assert all(iszero, L*N) "Conservation laws matrix L is not orthogonal to stoichiometric matrix N" 
+
+    # Coefficient matrix
+    first_nonzero_indices = [findfirst(!iszero, row) for row in eachrow(L)]
+    C = N[setdiff(collect(1:nrows(N)), first_nonzero_indices), :] 
+
+    # Exponent matrix for parametric toricity
+    row1 = [1; 0; 0:k; 1:k; 1:k] |> transpose
+    row2 = [0; 1; -(0:k); -(0:k-1); -(0:k-1)] |> transpose
+    row3 = [0; 0; ones(Int, 3*k+1)] |> transpose
+    A = matrix(ZZ, vcat(row1, row2, row3))
+
+    return C, M, L, A
+end

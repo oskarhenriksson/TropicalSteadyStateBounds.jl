@@ -11,3 +11,4 @@ DocMeta.setdocmeta!(TropicalSteadyStateBounds, :DocTestSetup,
 doctest(TropicalSteadyStateBounds, manual = false)
 
 include("test_root_bounds.jl")
+include("test_crnt.jl")

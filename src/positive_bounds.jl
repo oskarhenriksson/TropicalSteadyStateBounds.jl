@@ -1,22 +1,23 @@
 
 export lower_bound_of_maximal_positive_steady_state_count,
     lower_bound_of_maximal_positive_root_count,
-    lower_bound_of_maximal_positive_root_count_fixed_b_h
+    lower_bound_of_maximal_positive_root_count_fixed_b_k_h
 
 
 @doc raw"""
-    lower_bound_of_maximal_positive_root_count_fixed_b_h(
+    lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
     C::QQMatrix, M::ZZMatrix, L::QQMatrix,
     b_spec::Union{Vector{Int},Vector{QQFieldElem}}, 
+    k_spec::Union{Vector{Int},Vector{QQFieldElem}},
     h::Union{Vector{Int},Vector{QQFieldElem}}; 
     TropB::Union{TropicalVariety,Nothing}=nothing, 
     TropL::Union{TropicalLinearSpace,Nothing}=nothing,
     verbose::Bool=false
 )
 
-Compute a lower bound of the maximal positive root count for an augmented vertically parametrized system
-given by the matrices `C`, `M` and `L`, given a fixed choice of constant terms `b_spec` and shift `h` of
-the tropicalized binomial variety.
+Compute a lower bound of the maximal positive root count for an augmented vertically parametrized system given by 
+the matrices `C`, `M` and `L`, given a fixed choice of constant terms `b_spec`, parameters `k_spec` and shift `h` 
+of the tropicalized binomial variety.
 
 # Example
 ```jldoctest
@@ -28,15 +29,18 @@ julia> L = matrix(QQ, [1 1]);
 
 julia> h = [37,97,18];
 
+julia> k = [839, 562, 13];
+
 julia> b = [71];
 
-julia> lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h)
+julia> lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h)
 3
 ```
 """
-function lower_bound_of_maximal_positive_root_count_fixed_b_h(
+function lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
     C::QQMatrix, M::ZZMatrix, L::QQMatrix,
     b_spec::Union{Vector{Int},Vector{QQFieldElem}}, 
+    k_spec::Union{Vector{Int},Vector{QQFieldElem}},
     h::Union{Vector{Int},Vector{QQFieldElem}}; 
     TropB::Union{TropicalVariety,Nothing}=nothing, 
     TropL::Union{TropicalLinearSpace,Nothing}=nothing,
@@ -48,17 +52,21 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
     s = rank(C) #rank
     d = n-s #corank
 
+    C_tilde, M_tilde = monomial_reembedding(C, M)
+    r = ncols(M_tilde)
+
     @req nrows(L) == d "L must have the same number of rows as the corank of C"
     @req length(b_spec) == d "b_spec must have same length as the number of rows of L"
-    @req length(h) == m "h must have same length as the number of columns of M"
+    @req length(h) == r "h must have same length as the number of columns of M_tilde"
+    @req length(k_spec) == m "k_spec must have same length as the number of columns of M"
 
     K, t = rational_function_field(QQ,"t")
     nu = tropical_semiring_map(K,t)
-    R, x, z, y = polynomial_ring(K, "x"=>1:n, "z"=>1:1, "y"=>1:m)
+    R, x, z, y = polynomial_ring(K, "x"=>1:n, "z"=>1:1, "y"=>1:r)
 
     # Tropicalize the binomial part of the modified system
     if isnothing(TropB)
-        binomials = vcat([y[i]-prod(x.^M[:,i]) for i=1:m], [z[1]-1])
+        binomials = vcat([y[i]-prod(x.^M_tilde[:,i]) for i=1:r], [z[1]-1])
         TropB = Oscar.tropical_variety_binomial(ideal(R, binomials), nu)
         verbose && @info "Tropical binomial variety computed"
     end
@@ -68,8 +76,11 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
     @req check_genericity_of_specialization(Lb, b_spec) "b_spec must be generic"
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
+    @req check_genericity_of_specialization(C_tilde, k_spec) "k_spec must be generic"
+    C_tilde_spec = evaluate.(C_tilde, Ref(k_spec))
+
     if isnothing(TropL)
-        linear_part_matrix = block_diagonal_matrix([Lb_spec, C])
+        linear_part_matrix = block_diagonal_matrix([Lb_spec, C_tilde_spec])
         kernel_matrix = transpose(kernel(linear_part_matrix, side=:right))
         TropL = tropical_linear_space(kernel_matrix)
         verbose && @info "Tropical linear space computed"
@@ -79,28 +90,27 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
         perturbation=vcat(zeros(Int, n+1), h), with_multiplicities=false)
 
     # Count how many of the tropical points that are positive
-    Ilin = ideal(R, C*y) + ideal(R, Lb_spec*vcat(x,z))
+    Ilin = ideal(R, C_tilde_spec*y) + ideal(R, Lb_spec*vcat(x,z))
     return count(Oscar.is_initial_positive(Ilin, nu, lcm(denominator.(p)) .* p) for p in pts)
 end
 
 
-
 @doc raw"""
     lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
-    num_b_attempts::Int=5, num_h_attempts_per_b::Int=10, verbose::Bool=false)
+    num_b_k_attempts::Int=5, num_h_attempts_per_b_k::Int=10, verbose::Bool=false)
 
 Computes a lower bound on the maximal positive root count of the augmented vertically parametrized 
 system given by the coefficient matrix `C`, the exponent matrix `M`, and the affine form matrix `L`.
 
-The function randomly samples `num_b_attempts` choices of the constant terms, and
-for each such choice `num_h_attempts_per_b` shifts of the tropicalized binomial variety 
+The function randomly samples `num_b_k_attempts` choices of the b and k parameters, and
+for each such choice `num_h_attempts_per_b_k` shifts of the tropicalized binomial variety 
 in the space of auxillary variables in the modification.
 
 
 """
 function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
-    num_b_attempts::Int=5, 
-    num_h_attempts_per_b::Int=10, 
+    num_b_k_attempts::Int=5, 
+    num_h_attempts_per_b_k::Int=10, 
     show_progress::Bool=true,
     verbose::Bool=false
 )
@@ -111,11 +121,14 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
 
     @req nrows(L) == d "L must have the same number of rows as the corank of C"
 
+    C_tilde, M_tilde = monomial_reembedding(C, M)
+    r = ncols(M_tilde)
+
     # Tropicalize the binomial part of the modified system
     K, t = rational_function_field(QQ,"t")
     nu = tropical_semiring_map(K,t)
-    R, x, z, y = polynomial_ring(K, "x"=>1:n, "z"=>1:1, "y"=>1:m)
-    binomials = vcat([y[i]-prod(x.^M[:,i]) for i=1:m], [z[1]-1])
+    R, x, z, y = polynomial_ring(K, "x"=>1:n, "z"=>1:1, "y"=>1:r)
+    binomials = vcat([y[i]-prod(x.^M_tilde[:,i]) for i=1:r], [z[1]-1])
     TropB = Oscar.tropical_variety_binomial(ideal(R, binomials), nu)
     verbose && @info "Tropical binomial variety computed"
    
@@ -123,21 +136,24 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
     # Keep track of the maximal positive root count found and associated b and h values
     # Todo: Make this interruptible!
     best_count = 0
-    best_b = nothing 
+    best_b = nothing
+    best_k = nothing
     best_h = nothing
-    progress = ProgressMeter.Progress(num_b_attempts; 
+    progress = ProgressMeter.Progress(num_b_k_attempts; 
         dt=0.4, 
         desc="Trying parameter values...", 
         barlen=30,
         output = stdout,
         enabled = show_progress
     );
-    for b_attempt=1:num_b_attempts
+    for b_k_attempt=1:num_b_k_attempts
         b_spec = L*rand(1:1000, n)
         Lb_spec = hcat(L, -matrix(L*rand(1:1000, n)))
+        k_spec = rand(1:1000, m)
+        C_tilde_spec = evaluate.(C_tilde, Ref(k_spec))
     
         # Tropicalize the linear part of the modified system
-        linear_part_matrix = block_diagonal_matrix([Lb_spec, C])
+        linear_part_matrix = block_diagonal_matrix([Lb_spec, C_tilde_spec])
         kernel_matrix = transpose(kernel(linear_part_matrix, side=:right))
         TropL = tropical_linear_space(kernel_matrix)
         verbose && @info "Tropical linear space computed"
@@ -145,13 +161,13 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
         # Compute the stable intersection for different h values
         new_count = nothing 
         h = nothing
-        for h_attempt = 1:num_h_attempts_per_b
+        for h_attempt = 1:num_h_attempts_per_b_k
             generic_perturbation = false
             while !generic_perturbation
                 try
-                    h = rand(1:1000, m)
-                    new_count = lower_bound_of_maximal_positive_root_count_fixed_b_h(
-                        C, M, L, b_spec, h; TropB=TropB, TropL=TropL, verbose=verbose
+                    h = rand(1:1000, r)
+                    new_count = lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
+                        C, M, L, b_spec, k_spec, h; TropB=TropB, TropL=TropL, verbose=verbose
                     )
                     generic_perturbation = true
                 catch err
@@ -167,19 +183,20 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
             if new_count > best_count
                 best_count = new_count
                 best_b = b_spec
+                best_k = k_spec
                 best_h = h
             end
         end
 
         # Update the progress bar
-        ProgressMeter.update!(progress, b_attempt; 
+        ProgressMeter.update!(progress, b_k_attempt; 
             showvalues = [
-                ("Number of b attempts", "$(b_attempt) ($(num_b_attempts))"), 
+                ("Number of b attempts", "$(b_k_attempt) ($(num_b_k_attempts))"), 
                 ("Current maximal count", best_count)
             ]
         )
     end
-    return best_count, best_b, best_h
+    return best_count, best_b, best_k, best_h
 end
 
 @doc raw"""

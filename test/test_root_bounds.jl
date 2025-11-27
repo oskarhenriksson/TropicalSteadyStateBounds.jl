@@ -22,11 +22,12 @@ using TropicalSteadyStateBounds
     @test steady_state_degree(rn, check_transversality=true) == 3
     @test steady_state_degree(rn, check_transversality=false) == 3
 
-    h = [37,97,18]
     b = [71]
-    @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 3
+    k = [83, 56, 13]
+    h = [37,97,18]
+    @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 3
 
-    bound, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_attempts=5, num_h_attempts_per_b=3)
+    bound, _, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_k_attempts=5, num_h_attempts_per_b_k=3)
     @test bound == 3
     
 end
@@ -47,9 +48,10 @@ end
     @test steady_state_degree(rn) == 2
 
     C, M, L = augmented_vertical_system(rn)
-    h = [12, 86, 11, 27, 84, 98]
-    b =  [69, 42, 81]
-    @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 2
+    b = [69, 42, 81]
+    k = [284, 215, 921, 770, 883, 792]
+    h = [12, 86, 11, 27, 84]
+    @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 2
 
 end
 
@@ -69,9 +71,10 @@ end
     @test steady_state_degree(rn) == 3
 
     C, M, L = augmented_vertical_system(rn)
-    h = [84, 46, 30, 13, 23, 68]
-    b =   [59, 34]
-    @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 3
+    b = [59, 34]
+    k = [84, 46, 30, 13, 23, 68]
+    h = [834, 131, 91, 217, 253, 498]
+    @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 3
 
 end
 
@@ -91,9 +94,10 @@ end
     @test steady_state_degree(rn) == 3
 
     C, M, L = augmented_vertical_system(rn)
-    h = [79, 26, 89, 92, 34, 83]
     b = [68, 52, 99]
-    @test lower_bound_of_maximal_positive_root_count_fixed_b_h(C, M, L, b, h) == 1
+    k = [84, 46, 30, 13, 23, 68]
+    h = [79, 26, 89, 92]
+    @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 1
 
 
     A = kernel(matrix(ZZ, hcat([M[:, i] - M[:, ncols(M)] for i=1:ncols(M)-1]...)))
@@ -145,7 +149,7 @@ end
     C, M, L = augmented_vertical_system(rn)
 
     @test generic_root_count(C, M, L) == 6
-    bound, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
+    bound, _, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
     @test bound == 1
     A = matrix(ZZ, [[3, 2]])
     @test toric_root_bound(A, L) == 3

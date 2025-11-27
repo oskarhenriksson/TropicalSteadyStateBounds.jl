@@ -106,7 +106,7 @@ function toric_lower_bound_of_maximal_positive_root_count_fixed_b_h(
     # Count how many of the tropical points that are positive
     Lb_spec = hcat(L, -matrix(QQ.(b_spec)))
     Ilin = ideal(R, Lb_spec*vcat(x,z))
-    return count(Oscar.is_initial_positive(Ilin, tropical_semiring_map(QQ), p) for p in pts)
+    return count(Oscar.is_initial_positive(Ilin, tropical_semiring_map(QQ), lcm(denominator.(p)) .* p) for p in pts)
 end
 
 

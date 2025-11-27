@@ -80,7 +80,7 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_h(
 
     # Count how many of the tropical points that are positive
     Ilin = ideal(R, C*y) + ideal(R, Lb_spec*vcat(x,z))
-    return count(Oscar.is_initial_positive(Ilin, nu, p) for p in pts)
+    return count(Oscar.is_initial_positive(Ilin, nu, lcm(denominator.(p)) .* p) for p in pts)
 end
 
 

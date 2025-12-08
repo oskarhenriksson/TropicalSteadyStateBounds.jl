@@ -12,7 +12,7 @@ end;
 @time sd = steady_state_degree(rn)
 
 # The defining matrices for the steady state system
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 
 # Generic root count of the steady state system
 @time generic_root_count(C, M, L)
@@ -43,7 +43,7 @@ end;
 @time lower_bound_of_maximal_positive_steady_state_count(rn)
 
 # Verify the result for a given choice of b and h
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 b =  [69, 42, 81]
 k = [622, 732, 905, 631, 567, 253]
 h = [12, 86, 11, 27, 84]
@@ -62,7 +62,7 @@ end;
 @time lower_bound_of_maximal_positive_steady_state_count(rn)
 
 # Verify the result for a given choice of b and h
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 b = [59, 34]
 k = [839, 562, 13, 421, 233, 109]
 h = [84, 46, 30, 13, 23, 68]
@@ -77,7 +77,7 @@ rn = Catalyst.@reaction_network begin
   k4, 6*X1 -->  4*X2
 end
 
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 
 generic_root_count(C, M, L)
 bound, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)
@@ -100,7 +100,7 @@ end;
 @time lower_bound_of_maximal_positive_steady_state_count(rn)
 
 # Verify the result for a given choice of b and h
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 b = [68, 52, 99]
 k = [839, 562, 13, 421, 233, 109]
 h = [79, 26, 89, 92]
@@ -133,7 +133,7 @@ end
 b = [1811, 1135, 4769]
 k = [744, 59, 746, 120, 270, 517, 377, 798, 632, 431, 722, 333]
 h = [259, 800, 750, 684, 363, 120, 524, 616]
-C, M, L = augmented_vertical_system(rn)
+C, M, L = steady_state_system(rn)
 lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h)
 
 

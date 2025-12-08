@@ -133,4 +133,4 @@ julia> steady_state_degree(rn)
 
 """
 steady_state_degree(rn::ReactionSystem; kwargs...) = 
-    generic_root_count(augmented_vertical_system(rn)...; kwargs...)
+    generic_root_count(steady_state_system(rn)...; kwargs...)

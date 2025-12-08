@@ -1,8 +1,8 @@
-export augmented_vertical_system,
+export steady_state_system,
     multisite_phosphorylation_matrices
 
 """
-    augmented_vertical_system(rn)
+    steady_state_system(rn)
 
     For a reaction network `rn`, compute the coefficient, exponent, and linear part matrices
     of the augmented vertically parametrized steady state system.
@@ -17,7 +17,7 @@ export augmented_vertical_system,
         k3, 2*X1 + X2 --> 3*X1
     end;
 
-    julia> C, M, L = augmented_vertical_system(rn);
+    julia> C, M, L = steady_state_system(rn);
 
     julia> C
     [1   -1   -1]
@@ -31,7 +31,7 @@ export augmented_vertical_system,
     ```
 
 """
-function augmented_vertical_system(rn::ReactionSystem)
+function steady_state_system(rn::ReactionSystem)
 
     @req all(ismassaction.(reactions(rn), Ref(rn))) "All reactions must have mass action kinetics"
 

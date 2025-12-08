@@ -1,4 +1,16 @@
-export monomial_reembedding
+export monomial_reembedding, 
+    augmented_vertical_system
+
+function augmented_vertical_system(C::QQMatrix, M::ZZMatrix, L::QQMatrix)
+
+    KB, k, b = rational_function_field(QQ, "k"=>1:ncols(M), "b"=>1:nrows(L))
+    R, x = polynomial_ring(KB, "x"=>1:nrows(M))
+
+    steady_state = C*[k[j]*prod(x .^ M[:, j]) for j in 1:ncols(M)]
+    conservation_laws = L*x .- b
+
+    return [steady_state; conservation_laws]
+end
 
 """
     monomial_reembedding(C, M)

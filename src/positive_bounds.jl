@@ -206,4 +206,4 @@ end
     that a mass action network `rn` can have.
 """
 lower_bound_of_maximal_positive_steady_state_count(rn::ReactionSystem; kwargs...) = 
-    lower_bound_of_maximal_positive_root_count(augmented_vertical_system(rn)...; kwargs...)
+    lower_bound_of_maximal_positive_root_count(steady_state_system(rn)...; kwargs...)

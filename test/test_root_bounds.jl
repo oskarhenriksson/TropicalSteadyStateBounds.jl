@@ -47,7 +47,7 @@ end
 
     @test steady_state_degree(rn) == 2
 
-    C, M, L = augmented_vertical_system(rn)
+    C, M, L = steady_state_system(rn)
     b = [69, 42, 81]
     k = [284, 215, 921, 770, 883, 792]
     h = [12, 86, 11, 27, 84]
@@ -70,7 +70,7 @@ end
 
     @test steady_state_degree(rn) == 3
 
-    C, M, L = augmented_vertical_system(rn)
+    C, M, L = steady_state_system(rn)
     b = [59, 34]
     k = [84, 46, 30, 13, 23, 68]
     h = [834, 131, 91, 217, 253, 498]
@@ -93,7 +93,7 @@ end
 
     @test steady_state_degree(rn) == 3
 
-    C, M, L = augmented_vertical_system(rn)
+    C, M, L = steady_state_system(rn)
     b = [68, 52, 99]
     k = [84, 46, 30, 13, 23, 68]
     h = [79, 26, 89, 92]
@@ -146,7 +146,7 @@ end
         k4, 6*X1 -->  4*X2
     end;
 
-    C, M, L = augmented_vertical_system(rn)
+    C, M, L = steady_state_system(rn)
 
     @test generic_root_count(C, M, L) == 6
     bound, _, _, _ = lower_bound_of_maximal_positive_root_count(C, M, L)

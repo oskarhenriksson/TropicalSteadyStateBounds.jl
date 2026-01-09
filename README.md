@@ -43,7 +43,7 @@ julia> steady_state_degree(rn)
 To get a lower bound on the number of positive steady states, we instead run this:
 
 ```julia-repl
-julia> julia> lower_bound_of_maximal_positive_steady_state_count(rn)
+julia> lower_bound_of_maximal_positive_steady_state_count(rn)
 (1, QQFieldElem[901, 977, 1201], [970, 395, 93, 135, 418, 886], [794, 547, 6, 821])
 
 ```

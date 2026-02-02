@@ -2,38 +2,54 @@ name: CI
 
 on:
   pull_request:
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'Project.toml'
+      - 'Manifest.toml'
+      - '.github/workflows/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'Project.toml'
+      - 'Manifest.toml'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   test:
     name: Tests (Julia 1.12, Ubuntu)
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
 
     permissions:
-      actions: write
       contents: read
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Julia
-        uses: julia-actions/setup-julia@v2
+      - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.12'
+          version: "1.12"
 
-      - name: Cache Julia artifacts
-        uses: julia-actions/cache@v2
+      - name: Set depot path
+        run: echo "JULIA_DEPOT_PATH=${{ github.workspace }}/.julia" >> $GITHUB_ENV
 
-      - name: Instantiate environment and run tests
+      - name: Cache Julia depot
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.JULIA_DEPOT_PATH }}
+          key: ${{ runner.os }}-julia1.12-${{ hashFiles('Project.toml', 'Manifest.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-julia1.12-
+
+      - name: Instantiate, precompile, test
         run: |
-          julia --project=. -e '
-            using Pkg
-            Pkg.instantiate()
-            Pkg.test()
-          '
+          julia --color=yes --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile(); Pkg.test()'

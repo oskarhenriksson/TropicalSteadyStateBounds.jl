@@ -1,6 +1,6 @@
 
 
-module TropicalSteadyStateBounds
+module VerticalRootCounts
 
     using Oscar
     using Catalyst

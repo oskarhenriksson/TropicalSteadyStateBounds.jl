@@ -1,6 +1,6 @@
 using Test
 using Random, Oscar, Catalyst
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 
 @testset verbose=true "Root bounds for networks" begin
 @testset "Small example" begin

@@ -1,6 +1,6 @@
 using Test
 using Catalyst
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 
 @testset verbose=true "Steady state systems" begin
     @testset "4-site phosphorylation" begin

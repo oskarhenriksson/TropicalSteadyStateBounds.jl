@@ -1,6 +1,6 @@
-# TropicalSteadyStateBounds.jl
+# VerticalRootCounts.jl
 
-[![CI](https://github.com/oskarhenriksson/TropicalSteadyStateBounds.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/oskarhenriksson/TropicalSteadyStateBounds.jl/actions/workflows/ci.yml)
+[![CI](https://github.com/oskarhenriksson/VerticalRootCounts.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/oskarhenriksson/VerticalRootCounts.jl/actions/workflows/ci.yml)
 
 This Julia package is a proof-of-concept implementation of the tropical root bounds presented in the paper *Tropical bounds on the number of steady states of chemical reaction networks* by Elisenda Feliu, Paul Helminck, Oskar Henriksson, Yue Ren, Benjamin Schröter, and Máté L. Telek.
 
@@ -11,14 +11,14 @@ To install the package, run the following commands:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/oskarhenriksson/TropicalSteadyStateBounds.jl")
+Pkg.add(url="https://github.com/oskarhenriksson/VerticalRootCounts.jl")
 ```
 
 ## Examples of usage
 
 You load the package in a Julia session by running the following command:
 ```julia
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 ```
 
 You can either compute root bounds directly for an augmented vertically parametrized system (defined by a coefficient matrix `C`, an exponent matrix `M`, and coefficient matrix of linear forms `L`) in Oscar format, or for a chemical reaction network given in Catalyst format.

@@ -1,14 +1,14 @@
 using Test
 using Documenter
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 
 
-DocMeta.setdocmeta!(TropicalSteadyStateBounds, :DocTestSetup,
-    :(using TropicalSteadyStateBounds, Oscar, Catalyst),
+DocMeta.setdocmeta!(VerticalRootCounts, :DocTestSetup,
+    :(using VerticalRootCounts, Oscar, Catalyst),
     recursive = true,
 )
 
-doctest(TropicalSteadyStateBounds, manual = false)
+doctest(VerticalRootCounts, manual = false)
 
 include("test_root_bounds.jl")
 include("test_crnt.jl")

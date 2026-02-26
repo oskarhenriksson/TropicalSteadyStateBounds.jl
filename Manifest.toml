@@ -2239,7 +2239,7 @@ git-tree-sha1 = "311349fd1c93a31f783f977a71e8b062a57d4101"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.13"
 
-[[deps.TropicalSteadyStateBounds]]
+[[deps.VerticalRootCounts]]
 deps = ["Catalyst", "MixedSubdivisions", "Oscar", "ProgressMeter"]
 path = "."
 uuid = "711c507e-943e-4fde-96e1-c888ddd1de7d"

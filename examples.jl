@@ -1,5 +1,5 @@
 using Catalyst, Oscar
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 
 # The running example
 rn = @reaction_network begin

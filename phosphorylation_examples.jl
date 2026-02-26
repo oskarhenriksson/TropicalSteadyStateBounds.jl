@@ -1,4 +1,4 @@
-using TropicalSteadyStateBounds
+using VerticalRootCounts
 
 for k = 1:5
     println("\n\n$(k)-site phosphorylation network:\n")

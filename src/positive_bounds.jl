@@ -52,7 +52,7 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
     s = rank(C) #rank
     d = n-s #corank
 
-    C_tilde, M_tilde = monomial_reembedding(C, M)
+    C_tilde, M_tilde = minimal_presentation(C, M)
     r = ncols(M_tilde)
 
     @req nrows(L) == d "L must have the same number of rows as the corank of C"
@@ -121,7 +121,7 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
 
     @req nrows(L) == d "L must have the same number of rows as the corank of C"
 
-    C_tilde, M_tilde = monomial_reembedding(C, M)
+    C_tilde, M_tilde = minimal_presentation(C, M)
     r = ncols(M_tilde)
 
     # Tropicalize the binomial part of the modified system

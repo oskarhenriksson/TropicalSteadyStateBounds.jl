@@ -1,4 +1,4 @@
-export monomial_reembedding, 
+export minimal_presentation, 
     augmented_vertical_system
 
 function augmented_vertical_system(C::QQMatrix, M::ZZMatrix, L::QQMatrix)
@@ -13,7 +13,7 @@ function augmented_vertical_system(C::QQMatrix, M::ZZMatrix, L::QQMatrix)
 end
 
 """
-    monomial_reembedding(C, M)
+    minimal_presentation(C, M)
 
     Given a vertical system given by`C` and exponent matrix `M`, 
     compute the defining matrices for the monomial re-embedding.
@@ -33,7 +33,7 @@ end
     [0   1   1   0   0   0]
     [0   0   0   0   1   1]
 
-    julia> C_tilde, M_tilde = monomial_reembedding(C, M);
+    julia> C_tilde, M_tilde = minimal_presentation(C, M);
 
     julia> C_tilde
     [   0           k[3]   -k[4]           k[5]]
@@ -50,7 +50,7 @@ end
 
     ```
 """
-function monomial_reembedding(C::QQMatrix, M::ZZMatrix)
+function minimal_presentation(C::QQMatrix, M::ZZMatrix)
     columns = [M[:, i] for i in 1:ncols(M)]
     unique_columns = unique(columns)
     r = length(unique_columns)

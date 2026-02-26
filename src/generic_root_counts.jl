@@ -38,7 +38,7 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
     @req nrows(L) == d "The augmentation matrix L must have the same number of rows as the corank of the coefficient matrix"
 
     # Monomial re-embedding of the system
-    C_tilde, M_tilde = monomial_reembedding(C, M)
+    C_tilde, M_tilde = minimal_presentation(C, M)
     r = ncols(M_tilde)
 
     # Pick a generic specialization of the parameters

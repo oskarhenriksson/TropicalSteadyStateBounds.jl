@@ -26,10 +26,25 @@ using VerticalRootCounts
     k = [83, 56, 13]
     h = [37,97,18]
     @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 3
-
+    
     bound, _, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_k_attempts=5, num_h_attempts_per_b_k=3)
     @test bound == 3
     
+end
+
+@testset "Purely vertical system" begin
+    
+    Random.seed!(1234)
+
+    C = matrix(QQ, [-1  0  0  0  1  0; 0 -1  0  0  0  1;  0  0 -1  1  0  0]);
+    M = matrix(ZZ, [3  2  1  0  0  0; 0  1  0  2  1  0; 0  0  1  0  1  2]);
+    generic_root_count(C, M)
+
+    @test generic_root_count(C, M, check_transversality=true) == 0
+    @test generic_root_count(C, M, check_transversality=false) == 0
+    bound, _, _, _ = lower_bound_of_maximal_positive_root_count(C, M)
+    @test bound == 0
+
 end
 
 @testset "Cell cycle" begin

@@ -22,7 +22,7 @@ true
 """
 function check_genericity_of_specialization(A::AbstractAlgebra.Generic.MatSpaceElem{<:RingElem}, a_spec::Vector{<:Union{Int, RingElem}})::Bool
 
-    R = parent(first(A))
+    R = base_ring(A)
     @req ngens(R) == length(a_spec) "Specialization needs to match the number of parameters"
 
     # Specialize the symbolic matrix at a_spec

@@ -72,7 +72,7 @@ function lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
     end
 
     B, b = rational_function_field(QQ, "b"=>1:d)
-    Lb = hcat(B.(L), -matrix(b))
+    Lb = hcat(B.(L), -matrix(B, d, 1, b))
     @req check_genericity_of_specialization(Lb, b_spec) "b_spec must be generic"
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
@@ -108,7 +108,7 @@ in the space of auxillary variables in the modification.
 
 
 """
-function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix; 
+function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ, 0, nrows(M)); 
     num_b_k_attempts::Int=5, 
     num_h_attempts_per_b_k::Int=10, 
     show_progress::Bool=true,
@@ -148,7 +148,7 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
     );
     for b_k_attempt=1:num_b_k_attempts
         b_spec = L*rand(1:1000, n)
-        Lb_spec = hcat(L, -matrix(L*rand(1:1000, n)))
+        Lb_spec = hcat(L, -matrix(QQ, d, 1, L*rand(1:1000, n)))
         k_spec = rand(1:1000, m)
         C_tilde_spec = evaluate.(C_tilde, Ref(k_spec))
     

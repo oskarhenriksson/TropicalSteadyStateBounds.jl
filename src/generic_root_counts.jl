@@ -54,7 +54,7 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
 
     # Symbolic coefficient matrix for the augmentation of the system
     B, b = rational_function_field(QQ, "b"=>1:d)
-    Lb = hcat(B.(L), -matrix(b))
+    Lb = hcat(B.(L), -matrix(B, d, 1, b))
 
     # Pick a generic specialization of the constant terms
     if isnothing(b_spec)
@@ -73,8 +73,8 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
         tp_affine = transversal_presentation(Lb_spec)
         if tp_nonlinear != false && tp_affine != false
             verbose && @info "Transversal presentations found"
-            nonlinear_supports = [Matrix{Int}(M_tilde[:,indices]) for indices in tp_nonlinear]
-            affine_supports = [ hcat([i in 1:n ? standard_vector(i, n) : zeros(Int, n) for i in indices]...) for indices in tp_affine]
+            nonlinear_supports = Matrix{Int}[Matrix{Int}(M_tilde[:,indices]) for indices in tp_nonlinear]
+            affine_supports =  Matrix{Int}[hcat([i in 1:n ? standard_vector(i, n) : zeros(Int, n) for i in indices]...) for indices in tp_affine]
             supports = vcat(nonlinear_supports, affine_supports)
             return mixed_volume(supports)
         end

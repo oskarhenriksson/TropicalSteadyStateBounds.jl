@@ -32,7 +32,6 @@ function toric_root_bound(A::ZZMatrix, L::QQMatrix;
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
     # Check for transversality
-    # Warning: This currently gives incorrect values!
     if check_transversality
         tp = transversal_presentation(Lb_spec)
         if tp != false

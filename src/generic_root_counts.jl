@@ -81,7 +81,6 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
     end
 
     # Tropicalize the linear part of the modified system
-    # TODO: We should tropicalize the two linear spaces separately
     linear_part_matrix = block_diagonal_matrix([Lb_spec, C_tilde_spec])
     kernel_matrix = transpose(kernel(linear_part_matrix, side=:right))
     TropL = tropical_linear_space(kernel_matrix)

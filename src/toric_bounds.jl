@@ -31,6 +31,11 @@ function toric_root_bound(A::ZZMatrix, L::QQMatrix;
     @req check_genericity_of_specialization(Lb, b_spec) "Choice of constant terms to be generic"
     Lb_spec = evaluate.(Lb, Ref(b_spec))
 
+    # Nondegeneracy check
+    if !has_nondegenerate_zero(Lb_spec, A_extended)
+        return 0
+    end
+
     # Check for transversality
     if check_transversality
         tp = transversal_presentation(Lb_spec)

@@ -112,12 +112,19 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
     num_b_k_attempts::Int=5, 
     num_h_attempts_per_b_k::Int=10, 
     show_progress::Bool=true,
+    max_entry_size::Int=1000,
     verbose::Bool=false
 )
+
     n = nrows(M) #number of variables
     m = ncols(M) #number of parameters
     s = rank(C) #rank
     d = n-s #corank
+
+    # Check whether there are nondegenerate zeros at all
+    if !has_nondegenerate_zero(C, M, L)
+        return 0, L*rand(1:max_entry_size, n), rand(1:max_entry_size, m), rand(1:max_entry_size, d)
+    end
 
     @req nrows(L) == d "L must have the same number of rows as the corank of C"
 
@@ -147,9 +154,9 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
         enabled = show_progress
     );
     for b_k_attempt=1:num_b_k_attempts
-        b_spec = L*rand(1:1000, n)
-        Lb_spec = hcat(L, -matrix(QQ, d, 1, L*rand(1:1000, n)))
-        k_spec = rand(1:1000, m)
+        b_spec = L*rand(1:max_entry_size, n)
+        Lb_spec = hcat(L, -matrix(QQ, d, 1, b_spec))
+        k_spec = rand(1:max_entry_size, m)
         C_tilde_spec = evaluate.(C_tilde, Ref(k_spec))
     
         # Tropicalize the linear part of the modified system
@@ -165,7 +172,7 @@ function lower_bound_of_maximal_positive_root_count(C::QQMatrix, M::ZZMatrix, L:
             generic_perturbation = false
             while !generic_perturbation
                 try
-                    h = rand(1:1000, r)
+                    h = rand(1:max_entry_size, r)
                     new_count = lower_bound_of_maximal_positive_root_count_fixed_b_k_h(
                         C, M, L, b_spec, k_spec, h; TropB=TropB, TropL=TropL, verbose=verbose
                     )

@@ -30,6 +30,11 @@ function generic_root_count(C::QQMatrix, M::ZZMatrix, L::QQMatrix=zero_matrix(QQ
         check_transversality::Bool=true, 
         verbose::Bool=false)
 
+    # Check whether there are nondegenerate zeros at all
+    if !has_nondegenerate_zero(C, M, L)
+        return 0
+    end
+    
     n = nrows(M) #number of variables
     m = ncols(M) #number of parameters
     s = rank(C) #rank

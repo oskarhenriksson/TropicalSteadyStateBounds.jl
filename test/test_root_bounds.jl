@@ -19,6 +19,7 @@ using VerticalRootCounts
         k3, 2*X1 + X2 --> 3*X1
     end;
 
+    @test has_nondegenerate_zero(C, M, L)
     @test steady_state_degree(rn, check_transversality=true) == 3
     @test steady_state_degree(rn, check_transversality=false) == 3
 
@@ -27,7 +28,7 @@ using VerticalRootCounts
     h = [37,97,18]
     @test lower_bound_of_maximal_positive_root_count_fixed_b_k_h(C, M, L, b, k, h) == 3
     
-    bound, _, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_k_attempts=5, num_h_attempts_per_b_k=3)
+    bound, _, _, _ = lower_bound_of_maximal_positive_steady_state_count(rn, num_b_k_attempts=5, num_h_attempts_per_b_k=5)
     @test bound == 3
     
 end
@@ -39,6 +40,8 @@ end
     C = matrix(QQ, [-1  0  0  0  1  0; 0 -1  0  0  0  1;  0  0 -1  1  0  0]);
     M = matrix(ZZ, [3  2  1  0  0  0; 0  1  0  2  1  0; 0  0  1  0  1  2]);
     generic_root_count(C, M)
+
+    @test !has_nondegenerate_zero(C, M)
 
     @test generic_root_count(C, M, check_transversality=true) == 0
     @test generic_root_count(C, M, check_transversality=false) == 0

@@ -2,7 +2,7 @@
 [![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://oskarhenriksson.github.io/VerticalRootCounts.jl/dev/)
 [![CI](https://github.com/oskarhenriksson/VerticalRootCounts.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/oskarhenriksson/VerticalRootCounts.jl/actions/workflows/ci.yml)
 
-This Julia package is a proof-of-concept implementation of the tropical root bounds presented in the forthcoming preprint **Root bounds of vertical system using tropical geometry** by Elisenda Feliu, Paul Helminck, Oskar Henriksson, Yue Ren, Benjamin Schröter, and Máté L. Telek.
+This Julia package is a proof-of-concept implementation of the tropical root bounds presented in the forthcoming preprint **[Root bounds of vertical system using tropical geometry](https://arxiv.org/abs/2605.07645)** by Elisenda Feliu, Paul Helminck, Oskar Henriksson, Yue Ren, Benjamin Schröter, and Máté L. Telek.
 
 The package is based on tropical functionality from the computer algebra package [Oscar.jl](https://github.com/oscar-system/Oscar.jl/) and the tropical homotopy continuation algorithm for mixed volumes from [MixedSubdivisions.jl](https://github.com/saschatimme/MixedSubdivisions.jl). The package also has an interface to the chemical reaction networks theory package [Catalyst.jl](https://github.com/SciML/Catalyst.jl).
 
@@ -154,4 +154,19 @@ Result of positive tropical root bound computation
  Choice of constant terms b: [1762, 534, 534]
  Choice of perturbation h: [366, 602, 750, 30]
 
+```
+
+## How to cite the package
+If you find VerticalRootCounts.jl useful in your work, we kindly ask you to cite the accompanying paper:
+
+```
+@misc{FeliuHelminckHenrikssonRenSchröterTelek2025,
+      title={Root bounds of vertical systems using tropical geometry}, 
+      author={Elisenda Feliu and Paul Alexander Helminck and Oskar Henriksson and Yue Ren and Benjamin Schröter and Máté L. Telek},
+      year={2026},
+      eprint={2605.07645},
+      archivePrefix={arXiv},
+      primaryClass={math.AG},
+      url={https://arxiv.org/abs/2605.07645}, 
+}
 ```
